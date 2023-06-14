@@ -1,0 +1,77 @@
+#TASK 1: Get a COVID-19 pandemic Wiki page using HTTP request
+
+get_wiki_covid19_page <- function() {
+    
+  # Our target COVID-19 wiki page URL is: https://en.wikipedia.org/w/index.php?title=Template:COVID-19_testing_by_country  
+  # Which has two parts: 
+    # 1) base URL `https://en.wikipedia.org/w/index.php  
+    # 2) URL parameter: `title=Template:COVID-19_testing_by_country`, seperated by question mark ?
+    
+  # Wiki page base
+  wiki_base_url <- "https://en.wikipedia.org/w/index.php"
+  # You will need to create a List which has an element called `title` to specify which page you want to get from Wiki
+  # in our case, it will be `Template:COVID-19_testing_by_country`
+ 
+  # - Use the `GET` function in httr library with a `url` argument and a `query` arugment to get a HTTP response
+    
+  # Use the `return` function to return the response
+
+}
+
+#Call the get_wiki_covid19_page function to get a http response with the target html page
+library(httr)
+
+get_wiki_covid19_page <- function() {
+  # Wiki page base URL
+  wiki_base_url <- "https://en.wikipedia.org/w/index.php"
+  
+  # Create a list which has an element called 'title'
+  my_params <- list(title = "Template:COVID-19_testing_by_country")
+  
+  # Use the 'Get' function in httr library to retrieve the HTML page
+  response <- GET(url = wiki_base_url, query = my_params)
+  
+  # Return the response
+  return(response)
+}
+
+# Call the get_wiki_covid19_page function and print the response
+response <- get_wiki_covid19_page()
+print(response)
+
+#TASK 2: Extract COVID-19 testing data table from the wiki HTML page
+
+# Get the root html node from the http response in Task 1 
+library(rvest)
+
+get_root_html <- function() {
+  # Get Wiki page base URL using HTTP request
+  wiki_base_url <- "https://en.wikipedia.org/w/index.php"
+  list_params <- list(
+    title = "Template:COVID-19_testing_by_country"
+  )
+  response <- GET(url = wiki_base_url, query = list_params)
+
+  # Get root html 
+  root_node <- read_html(content(response, "text"))
+
+  return(root_node)
+}
+
+# Call the get_root_html function
+root_html <- get_root_html()
+print(root_html)
+
+#Get the tables in the HTML root node using html_nodes function.
+# Get the table node from the root html node
+table_nodes <- html_nodes(root_html, "table")
+
+
+# Read the table node and convert it into a data frame, and print the data frame for review
+specific_table <- html_table(table_nodes[[2]])
+
+# Convert the specific table into a data frame
+data_frame <- as.data.frame(specific_table)
+
+# Print the data frame for review
+print(data_frame)
